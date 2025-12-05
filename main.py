@@ -374,7 +374,7 @@ def spawnLight(app):
         return
     
     # determines the angle
-    lightAngle = random.randint(30, 150)
+    lightAngle = random.randint(40, 140)
     
     app.lightAngle = lightAngle * -1
 
@@ -446,51 +446,6 @@ def slowCastRay(app, grid2D, angle):
     # print(f"angle: {angle}, distance:{distance}")
     drawWall(app, distance, angle)
 
-
-
-# Draws the walls and 
-def drawWall(app, distance, angle):
-    startingAngle = app.playerDir.getAngle() - app.playerFOV/2
-    dAngle = abs(startingAngle - angle)
-    # print(f"dAngle: {dAngle}")
-    # print(f"distance: {distance}")
-    # this is the height of the wall/windows
-    modelWallHeight = 900
-    
-    wallWidth = math.ceil(app.dAngle/app.playerFOV * app.screen.width)
-    viewWallHeight = 0 if distance == None else int(modelWallHeight/distance)
-    
-    wallTop = int(app.screen.height/2 - viewWallHeight/2) + app.cameraTilt
-    wallLeft = dAngle/app.playerFOV * app.screen.width
-    
-    if wallWidth != 0 and viewWallHeight != 0:
-        isLight = False
-        if int(angle) == app.lightAngle:
-            isLight = True
-        drawSector(app, wallLeft, wallTop, wallWidth, viewWallHeight, isLight)
-
-def drawSector(app, left, top, width, height, isLight):
-    waterTop = app.waterLevel
-    waterWidth = 40
-    windowBoarderWidth = 30
-    
-    skyTop = top + windowBoarderWidth
-    skyHeight = waterTop - top - windowBoarderWidth
-    
-    waterHeight = (top + windowBoarderWidth + height - 2 * windowBoarderWidth 
-                   - waterTop)
-    
-    
-    if (top > 0):
-        # drawRect(left, 0, width, top, fill='gray')
-        # drawRect(left, top, width, windowBoarderWidth, fill='lightgray')
-        drawRect(left, 0, width, top + windowBoarderWidth + skyHeight, 
-                 fill=app.skyColour)
-        drawRect(left, waterTop, width, waterHeight, fill='blue')
-        drawRect(left, waterHeight + waterTop, width, windowBoarderWidth, 
-                 fill='darkgray')
-        drawRect(left, top + height, width, top, fill='brown')
-    
 # slowCastRay optimized to use DDA instead of stepping courtesy of mostly Chat 
 # based on this paper:
 # Amanatides, John & Woo, Andrew. (1987). A Fast Voxel Traversal Algorithm for 
@@ -542,6 +497,51 @@ def fastCastRay(app, grid2D, angle):
         
     drawWall(app, distance, angle)
     
+
+# Draws the walls
+def drawWall(app, distance, angle):
+    startingAngle = app.playerDir.getAngle() - app.playerFOV/2
+    dAngle = abs(startingAngle - angle)
+    # print(f"dAngle: {dAngle}")
+    # print(f"distance: {distance}")
+    # this is the height of the wall/windows
+    modelWallHeight = 900
+    
+    wallWidth = math.ceil(app.dAngle/app.playerFOV * app.screen.width)
+    viewWallHeight = 0 if distance == None else int(modelWallHeight/distance)
+    
+    wallTop = int(app.screen.height/2 - viewWallHeight/2) + app.cameraTilt
+    wallLeft = dAngle/app.playerFOV * app.screen.width
+    
+    if wallWidth != 0 and viewWallHeight != 0:
+        isLight = False
+        if int(angle) == app.lightAngle:
+            isLight = True
+        drawSector(app, wallLeft, wallTop, wallWidth, viewWallHeight, isLight)
+
+def drawSector(app, left, top, width, height, isLight):
+    waterTop = app.waterLevel
+    waterWidth = 40
+    windowBoarderWidth = 30
+    
+    skyTop = top + windowBoarderWidth
+    skyHeight = waterTop - top - windowBoarderWidth
+    
+    waterHeight = (top + windowBoarderWidth + height - 2 * windowBoarderWidth 
+                   - waterTop)
+    
+    
+    if (top > 0):
+        # drawRect(left, 0, width, top, fill='gray')
+        # drawRect(left, top, width, windowBoarderWidth, fill='lightgray')
+        drawRect(left, 0, width, top + windowBoarderWidth + skyHeight, 
+                 fill=app.skyColour)
+        drawRect(left, waterTop, width, waterHeight, fill='blue')
+        drawRect(left, waterHeight + waterTop, width, windowBoarderWidth, 
+                 fill='darkgray')
+        drawRect(left, top + height, width, top, fill='brown')
+    
+
 def drawTime(app):
     Left = app.screen.width//6 * 4
     Top = app.screen.height//12
